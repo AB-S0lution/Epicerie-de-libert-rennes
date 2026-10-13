@@ -40,6 +40,24 @@ function scrollProgress(): void {
   document.body.appendChild(bar)
 }
 
+function initNav(): void {
+  const btn = $<HTMLButtonElement>('[data-burger]')
+  const nav = $('#nav')
+  if (!btn || !nav) return
+  const set = (open: boolean): void => {
+    nav.classList.toggle('is-open', open)
+    btn.setAttribute('aria-expanded', String(open))
+    btn.setAttribute('aria-label', open ? 'Fermer le menu' : 'Menu')
+    document.documentElement.classList.toggle('nav-open', open)
+  }
+  btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'))
+  nav.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) set(false) })
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && nav.classList.contains('is-open')) { set(false); btn.focus() }
+  })
+  window.matchMedia('(min-width: 1100px)').addEventListener('change', (m) => { if (m.matches) set(false) })
+}
+
 async function motion(page: string): Promise<void> {
   const fx = await import('./scripts/fx')
   const reduce = reducedMotion()
@@ -56,6 +74,7 @@ async function motion(page: string): Promise<void> {
 function boot(): void {
   const page = document.body.dataset.page ?? ''
   initTheme()
+  initNav()
   initStatus()
   initList()
   initClocks()

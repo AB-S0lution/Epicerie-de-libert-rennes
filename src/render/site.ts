@@ -120,7 +120,7 @@ export function header(active: string): string {
     <a class="status-pill" href="${href('horaires-acces/')}" data-status-pill aria-live="polite">
       <i class="dot" aria-hidden="true"></i><span class="st-text">Voir les horaires</span>
     </a>
-    <nav class="nav" id="nav" aria-label="Navigation principale">${nav}</nav>
+    <nav class="nav" id="nav" aria-label="Navigation principale" data-lenis-prevent>${nav}</nav>
     <div class="hdr-tools">
       <button class="icon-btn" type="button" data-theme-toggle aria-label="Passer en mode jour" title="Jour / Nuit">
         <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path class="ico-moon" d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5z" fill="currentColor"/><g class="ico-sun" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></g></svg>

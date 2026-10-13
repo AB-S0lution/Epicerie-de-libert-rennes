@@ -152,7 +152,7 @@ main:focus { outline: none; }
 .link-arrow::after { content: "→"; transition: transform 200ms var(--ease-out); }
 .chip, .chip-s { font-family: var(--font-cond); letter-spacing: 0.02em; }
 .chip {
-  min-height: 40px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--trottoir); font-size: 1rem; font-weight: 600; white-space: nowrap;
+  min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--trottoir); font-size: 1rem; font-weight: 600; white-space: nowrap;
   background: transparent; transition: background-color 180ms ease, border-color 180ms ease, transform 120ms var(--ease-out);
 }
 .chip:active { transform: scale(0.97); }
@@ -167,12 +167,17 @@ main:focus { outline: none; }
 /* ---------- Header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 50; height: var(--header-h);
-  background: color-mix(in srgb, var(--bitume) 88%, transparent);
-  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--trottoir);
 }
+/* Blur lives on a pseudo-element: backdrop-filter on the header itself would become the
+   containing block of the fixed mobile menu and clip it to the header's height. */
+.site-header::before {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: color-mix(in srgb, var(--bitume) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
 .hdr-in { max-width: 1400px; margin-inline: auto; height: 100%; padding-inline: clamp(12px, 3vw, 32px); display: flex; align-items: center; gap: clamp(10px, 2vw, 28px); }
-.wordmark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; flex: none; }
+.wordmark { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; text-decoration: none; flex: none; }
 .wm-stripes {
   width: 30px; height: 30px; border-radius: 4px; flex: none;
   background: repeating-linear-gradient(90deg, var(--hermine-blanc) 0 5px, var(--hermine-noir) 5px 10px);
@@ -225,6 +230,7 @@ main:focus { outline: none; }
   .nav.is-open a:nth-child(2) { animation-delay: 40ms; } .nav.is-open a:nth-child(3) { animation-delay: 80ms; }
   .nav.is-open a:nth-child(4) { animation-delay: 120ms; } .nav.is-open a:nth-child(5) { animation-delay: 160ms; } .nav.is-open a:nth-child(6) { animation-delay: 200ms; }
 }
+html.nav-open, html.nav-open body { overflow: hidden; }
 @keyframes nav-in { from { opacity: 0; transform: translateY(14px); } }
 @media (max-width: 560px) {
   .status-pill { margin-left: auto; padding: 0 10px; font-size: 0.8rem; }
@@ -236,10 +242,13 @@ main:focus { outline: none; }
   .wordmark { gap: 7px; }
   .wm-stripes { width: 24px; height: 24px; }
   .wm-bot { font-size: 1.05rem; }
-  .status-pill { padding: 0 8px; gap: 6px; font-size: 0.74rem; min-width: 0; }
-  .icon-btn { width: 40px; height: 40px; }
+  .status-pill { padding: 0 8px; gap: 6px; font-size: 0.74rem; min-width: 0; min-height: 44px; }
+  .hdr-tools { gap: 0; }
 }
-@media (max-width: 380px) { .status-pill .st-text { max-width: 9.5em; overflow: hidden; text-overflow: ellipsis; } }
+/* Phones: the pill text wraps onto two lines instead of pushing the menu button off-screen. */
+@media (max-width: 400px) {
+  .status-pill { flex: 0 1 auto; white-space: normal; line-height: 1.1; padding: 4px 8px; }
+}
 
 .notices { position: relative; z-index: 51; background: var(--sodium); color: var(--on-sodium); font-weight: 600; padding: 10px clamp(16px, 4vw, 48px); display: flex; gap: 12px; justify-content: space-between; align-items: center; }
 .notices[hidden] { display: none; }
