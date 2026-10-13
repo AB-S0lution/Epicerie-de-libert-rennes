@@ -32,7 +32,7 @@ export function productCard(p: Product): string {
     .map((l) => `<span class="chip-s">${esc(l as string)}</span>`)
     .join('')
   return `<li class="pcard" style="--tint:${rayon?.tint ?? '#F4A93A'}" data-id="${p.id}">
-    <div class="pc-tile"><div class="pc-art">${glyph(p.illustration)}</div><i class="pc-shelf" aria-hidden="true"></i></div>
+    <div class="pc-tile">${RAYON_PHOTO[p.rayon] ? `<img class="pc-photo" src="${photo(RAYON_PHOTO[p.rayon]).src}" alt="" width="${photo(RAYON_PHOTO[p.rayon]).width}" height="${photo(RAYON_PHOTO[p.rayon]).height}" loading="lazy" decoding="async" />` : ''}<div class="pc-art">${glyph(p.illustration)}</div><i class="pc-shelf" aria-hidden="true"></i></div>
     <div class="pc-body">
       <h3>${esc(p.name)}</h3>
       <p class="pc-meta">${tagLabels}</p>
@@ -56,6 +56,20 @@ export function photoFigure(ph: Photo, cls = ''): string {
 const POST_PHOTO: Record<string, string> = {
   'comptoir-colis': 'colis-table', 'pile-colis': 'pile-cartons', concert: 'trottoir-nuit', pluie: 'rue-nuit', canal: 'commerces-nuit',
   marche: 'caisse-fruits', 'rayon-depannage': 'rayon-epicerie', 'rayon-sec': 'pates-seches', 'facade-nuit': 'vitrine-nuit',
+}
+
+/** Cover photo slug for a journal post (every post scene has one). */
+export const postPhoto = (p: Post): Photo | undefined => (POST_PHOTO[p.scene] ? photo(POST_PHOTO[p.scene]) : undefined)
+
+/** One illustration photo per rayon: used by the catalogue header and the product tiles. */
+export const RAYON_PHOTO: Record<string, string> = {
+  depannage: 'gondole-vue-haut', sale: 'pates-seches', boissons: 'frigo-boissons', fruits: 'legumes-frais', snacks: 'sandwich-jambon',
+  petitdej: 'rayon-cereales-lait', sucre: 'bocaux-etagere', menager: 'rayon-conserves', hygiene: 'allee-epicerie', breizh: 'pain-tranche',
+}
+
+/** Slim full-width photo band for text-heavy pages (FAQ, legal, avis...). */
+export function photoBand(slug: string, cls = ''): string {
+  return `<div class="wrap ph-band-wrap ${cls}">${photoFigure(photo(slug), 'ph-band')}</div>`
 }
 
 export function sceneFigure(id: string, alt: string, cls = ''): string {
@@ -115,8 +129,8 @@ export function hoursFull(): string {
     const p = hours.parcel[i]
     const differs = s.open !== a.open
     return `<tr data-day="${i}"><th scope="row">${d}</th>
-      <td>${hLabel(toMin(s.open))} à ${hLabel(toMin(s.close))}${differs ? ` <span class="alt" title="Autre source : ${hLabel(toMin(a.open))}">(autre source : ${hLabel(toMin(a.open))})</span>` : ''}</td>
-      <td>${hLabel(toMin(p.open))} à ${hLabel(toMin(p.close))}</td></tr>`
+      <td data-label="Épicerie">${hLabel(toMin(s.open))} à ${hLabel(toMin(s.close))}${differs ? ` <span class="alt" title="Autre source : ${hLabel(toMin(a.open))}">(autre source : ${hLabel(toMin(a.open))})</span>` : ''}</td>
+      <td data-label="Relais colis">${hLabel(toMin(p.open))} à ${hLabel(toMin(p.close))}</td></tr>`
   }).join('')
   return `<table class="hours-full">
     <caption>Horaires par jour. <strong>À confirmer</strong> : les sources ne concordent pas.</caption>

@@ -3,7 +3,8 @@ import { rayonById } from '../data/categories'
 import { products } from '../data/products'
 import { glyph } from '../lib/art'
 import { esc, typo } from '../lib/format'
-import { productCard } from '../render/parts'
+import { photoImg, productCard, RAYON_PHOTO } from '../render/parts'
+import { photo } from '../data/photos'
 import { $, $$, finePointer, reducedMotion } from './dom'
 
 const norm = (s: string): string => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
@@ -33,7 +34,7 @@ export function initCatalog(): void {
     count.textContent = typo(`${list.length} produit${list.length > 1 ? 's' : ''} d’exemple`)
     const r = state.rayon === 'all' ? undefined : rayonById(state.rayon)
     head.innerHTML = r
-      ? typo(`<div class="rh" style="--tint:${r.tint}">${glyph(r.glyph)}<div><h2>${esc(r.label)}</h2><p>${esc(r.blurb)}</p></div></div>`)
+      ? typo(`<div class="rh" style="--tint:${r.tint}">${glyph(r.glyph)}<div><h2>${esc(r.label)}</h2><p>${esc(r.blurb)}</p></div>${RAYON_PHOTO[r.id] ? `<figure class="ph-fig rh-photo">${photoImg(photo(RAYON_PHOTO[r.id]))}<figcaption class="ph-cap">Photo d’illustration</figcaption></figure>` : ''}</div>`)
       : ''
     const url = new URL(location.href)
     if (state.rayon === 'all') url.searchParams.delete('r'); else url.searchParams.set('r', state.rayon)

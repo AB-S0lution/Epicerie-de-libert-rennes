@@ -37,12 +37,19 @@ export function initHero(): void {
   }
 
   // Headline letters drop in like sign letters.
+  const small = window.matchMedia('(max-width: 899px)').matches
   if (title) {
     title.style.visibility = 'visible'
-    const split = SplitText.create(title, { type: 'words,chars', mask: 'words' })
-    gsap.from(split.chars, { yPercent: -110, rotationX: -70, opacity: 0, duration: 0.8, ease: 'back.out(1.4)', stagger: 0.035, delay: 0.1 })
+    if (small) {
+      // Phones: words, not 30 single letters, drop in; no 3D rotation (cheaper, same sign-letter feel).
+      const split = SplitText.create(title, { type: 'words', mask: 'words' })
+      gsap.from(split.words, { yPercent: -110, opacity: 0, duration: 0.7, ease: 'back.out(1.3)', stagger: 0.06, delay: 0.1 })
+    } else {
+      const split = SplitText.create(title, { type: 'words,chars', mask: 'words' })
+      gsap.from(split.chars, { yPercent: -110, rotationX: -70, opacity: 0, duration: 0.8, ease: 'back.out(1.4)', stagger: 0.035, delay: 0.1 })
+    }
   }
-  gsap.from('.hero-sub, .hero-cta, .hero-tbc, .live-sign', { opacity: 0, y: 18, duration: 0.8, ease: 'power3.out', stagger: 0.08, delay: 0.5 })
+  gsap.from('.hero-sub, .hero-cta, .hero-tbc, .live-sign', { opacity: 0, y: small ? 12 : 18, duration: small ? 0.6 : 0.8, ease: 'power3.out', stagger: 0.08, delay: small ? 0.35 : 0.5 })
 
   const sh = $('#shutter')
   if (sh) {
@@ -51,17 +58,17 @@ export function initHero(): void {
       tl.to(sh, { y: UP - 14, duration: 1.1, ease: 'expo.out' }).to(sh, { y: UP, duration: 0.3, ease: 'power2.inOut' })
       tl.fromTo('.ouvert-text', { opacity: 0.1 }, { opacity: 1, duration: 0.3, ease: 'steps(3)' }, 0.9)
       tl.call(() => { const s = $('[data-live-sign]'); s?.classList.add('is-flicker') }, [], 0.9)
-      // On scroll the shutter lowers part-way: you are « entering the shop ».
+      // On scroll the shutter lowers part-way: you are « entering the shop ». Shorter travel on phones.
       gsap.to('#shutter-scroll', {
-        y: 300, ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true },
+        y: small ? 180 : 300, ease: 'none',
+        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: small ? true : 0.4 },
       })
     } else {
       setShutterFinal(false)
       gsap.fromTo('#shutter-msg', { opacity: 0 }, { opacity: 0.85, duration: 0.9, delay: 0.6 })
     }
   }
-  gsap.to('.hero-art svg', { yPercent: -4, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } })
+  if (!small) gsap.to('.hero-art svg', { yPercent: -4, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } })
 }
 
 export function initStory(): void {
@@ -78,7 +85,19 @@ export function initStory(): void {
   const hoursTxt = scenes.map((s) => s.dataset.hour ?? '')
   const mm = gsap.matchMedia()
 
-  mm.add('(min-width: 900px) and (prefers-reduced-motion: no-preference)', () => {
+  // Touch phones and tablets: no pin. The scenes stay stacked (or swipe on tablets) and each one
+  // gets its own light scrubbed reveal: the sky darkens behind it and the vignette drifts.
+  mm.add('(max-width: 899px) and (prefers-reduced-motion: no-preference), (hover: none) and (prefers-reduced-motion: no-preference)', () => {
+    scenes.forEach((sc) => {
+      const art = $<HTMLElement>('.n-art svg', sc)
+      if (art) gsap.fromTo(art, { yPercent: -5, scale: 1.08 }, { yPercent: 5, ease: 'none', scrollTrigger: { trigger: sc, start: 'top bottom', end: 'bottom top', scrub: true } })
+      const hour = $<HTMLElement>('.n-hour', sc)
+      if (hour) gsap.from(hour, { xPercent: -12, opacity: 0, duration: 0.6, ease: 'power3.out', scrollTrigger: { trigger: sc, start: 'top 85%', once: true } })
+    })
+  })
+
+  // Desktop with a fine pointer only: the pinned horizontal night (a pin is fragile under touch momentum).
+  mm.add('(min-width: 900px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)', () => {
     story.classList.add('is-pinned')
     const wins = $$('.sw', strip)
     const keep = 5

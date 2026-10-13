@@ -10,14 +10,16 @@ import { reviews } from '../data/reviews'
 import { transport } from '../data/business'
 import { ermine, glyph, nightStrip, quartierMap, shopfront, vignette } from '../lib/art'
 import { esc } from '../lib/format'
-import { clockMarkup, photoFigure, photoImg, postCard, ratingBadge, receipt } from './parts'
+import { clockMarkup, photoFigure, photoImg, postCard, RAYON_PHOTO, ratingBadge, receipt } from './parts'
 import { photo, photos } from '../data/photos'
 import { href } from './site'
 
 const BENTO_ORDER = ['depannage', 'sale', 'snacks', 'boissons', 'fruits', 'menager', 'petitdej', 'sucre', 'hygiene', 'breizh']
 
 function bentoTile(r: Rayon): string {
+  const ph = RAYON_PHOTO[r.id] ? photo(RAYON_PHOTO[r.id]) : undefined
   return `<a class="bento-tile bt-${r.size}" style="--tint:${r.tint}" href="${href('rayons/?r=' + r.id)}">
+    ${ph ? `<img class="bt-photo" src="${ph.src}" alt="" width="${ph.width}" height="${ph.height}" loading="lazy" decoding="async" />` : ''}
     <span class="bt-art">${glyph(r.glyph)}</span>
     <span class="bt-txt"><strong>${esc(r.short)}</strong><span>${esc(r.blurb)}</span></span>
     <span class="bt-go" aria-hidden="true">→</span>

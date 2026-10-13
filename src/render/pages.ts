@@ -13,7 +13,7 @@ import { products } from '../data/products'
 import { glyph, quartierMap } from '../lib/art'
 import { dateFr, esc } from '../lib/format'
 import { photo, photoThemes, photos } from '../data/photos'
-import { clockMarkup, photoFigure, photoImg, faqBlock, hoursFull, postCard, productCard, ratingBadge, receipt, sceneFigure } from './parts'
+import { clockMarkup, photoBand, photoFigure, photoImg, postPhoto, faqBlock, hoursFull, postCard, productCard, ratingBadge, receipt, sceneFigure } from './parts'
 import { ALL_LINKS, href, pageHero } from './site'
 
 // ---------------- Rayons ----------------
@@ -72,6 +72,8 @@ export function relaisBody(): string {
 <section class="section"><div class="wrap">
   <h2 class="h-display">Ce que vous pouvez faire</h2>
   <div class="svc-grid">${services.map((s) => `<article class="svc"><h3>${esc(s.title)}</h3><p>${esc(s.text)}</p>${s.id === 'pressing' ? `<a class="link-arrow" href="${business.links.impekkable}" target="_blank" rel="noopener">Voir Impekkable</a>` : ''}</article>`).join('')}</div>
+  <ul class="photo-strip ps-3">${['colis-table', 'pile-cartons', 'colis-carton'].map((s) => `<li class="ps-item">${photoImg(photo(s))}</li>`).join('')}</ul>
+  <p class="tbc">Photos d’illustration (Unsplash), pas des photos du relais.</p>
 </div></section>
 
 <section class="section steps-section"><div class="wrap steps-grid">
@@ -142,6 +144,7 @@ ${pageHero('Horaires et accès', 'Quand passer, comment venir. Les horaires sont
   </aside>
 </div></section>
 
+${photoBand('trottoir-nuit')}
 <section class="section map-section"><div class="wrap acces-grid">
   <div class="acces-map">${quartierMap()}</div>
   <div class="acces-copy">
@@ -201,13 +204,14 @@ ${pageHero('Le magasin et le boulevard', 'Une épicerie de quartier au 46 boulev
 
 <section class="section"><div class="wrap">
   <h2 class="h-display">Autour du no 46</h2>
+  ${photoFigure(photo('commerces-nuit'), 'ph-band lm-band')}
   <div class="landmarks">${landmarks.map((l) => `<article class="lm lm-${l.area}"><h3>${esc(l.name)}</h3><p>${esc(l.text)}</p></article>`).join('')}</div>
 </div></section>
 
 <section class="section"><div class="wrap">
   <h2 class="h-display">Qui fait quoi</h2>
   <p class="lead">Trois rôles au comptoir, sans noms ni portraits.</p>
-  <div class="team">${team.map((t) => `<article class="role"><div class="role-art">${glyph(t.id === 'comptoir' ? 'pack' : t.id === 'relais' ? 'box' : 'jar')}</div><h3>${esc(t.role)}</h3><p>${esc(t.text)}</p></article>`).join('')}</div>
+  <div class="team">${team.map((t) => `<article class="role">${photoFigure(photo(t.id === 'comptoir' ? 'filet-courses' : t.id === 'relais' ? 'colis-table' : 'caisse-fruits'), 'role-photo')}<div class="role-art">${glyph(t.id === 'comptoir' ? 'pack' : t.id === 'relais' ? 'box' : 'jar')}</div><h3>${esc(t.role)}</h3><p>${esc(t.text)}</p></article>`).join('')}</div>
 </div></section>`
 }
 
@@ -216,6 +220,7 @@ export function avisBody(): string {
   const words = reviewWords.map((w) => `<li class="w-${w.weight}">${esc(w.word)}</li>`).join('')
   return `
 ${pageHero('Vos avis', 'Onze avis Google, recopiés tels quels. Aucun nom de client n’est affiché.')}
+${photoBand('vitrine-nuit', 'band-top')}
 <section class="section"><div class="wrap">
   <div class="avis-top">${ratingBadge()}<p class="lead">Note de 5,0/5 sur 26 avis Google (oct. 2026). Peu d’avis, une jeune adresse : nous ne prétendons rien de plus.</p></div>
   <div class="receipt-wall wall-all">${reviews.map((r, i) => receipt(r, i)).join('')}</div>
@@ -244,8 +249,9 @@ export function articleBody(): string {
       return `<article class="article" data-slug="${p.slug}" ${i ? 'data-extra' : ''}>
       <header class="art-head"><p class="post-meta"><time datetime="${p.date}">${dateFr(p.date)}</time><span>${p.readingMinutes} min de lecture</span><span class="chip-s chip-ex">article d’exemple</span></p>
         <h1 class="h-display">${esc(p.title)}</h1><p class="lead">${esc(p.excerpt)}</p></header>
-      ${sceneFigure(p.scene, 'Illustration : ' + p.title, 'art-fig')}
+      ${postPhoto(p) ? photoFigure(postPhoto(p)!, 'art-cover') : ''}
       <div class="art-body">${p.body.map((t) => `<p>${esc(t)}</p>`).join('')}</div>
+      ${sceneFigure(p.scene, 'Illustration : ' + p.title, 'art-fig')}
       <aside class="related"><h2>À lire aussi</h2><div class="post-grid pg-3">${related.map((x) => postCard(x)).join('')}</div></aside>
     </article>`
     })
@@ -279,6 +285,7 @@ ${pageHero('Scènes du boulevard', 'Dix-neuf illustrations originales, dessinée
 export function faqBody(): string {
   return `
 ${pageHero('Questions fréquentes', 'Horaires, colis, paiement, produits, accès. Les réponses reposent sur des faits vérifiés ou disent « à confirmer en magasin ».')}
+${photoBand('gondole-vue-haut', 'band-top')}
 <section class="section"><div class="wrap faq-layout">
   <nav class="faq-nav" aria-label="Thèmes">${faqGroups.map((g) => `<a href="#fg-${g}">${g}</a>`).join('')}</nav>
   <div class="faq-list">${faqBlock()}</div>
@@ -292,12 +299,14 @@ export function contactBody(): string {
 ${pageHero('Nous trouver', 'Passez nous voir, on répond au comptoir.')}
 <section class="section"><div class="wrap two-col">
   <div class="contact-main">
+    ${photoFigure(photo('commerces-nuit'), 'contact-photo')}
     <address class="big-address">46 boulevard de la Liberté<br />35000 Rennes</address>
     <p class="breton-plate sm"><span>Boulevard de la Liberté</span><em>${business.address.breton}</em></p>
     <p class="hero-cta"><a class="btn btn-primary" href="${business.links.itineraire}" target="_blank" rel="noopener">Itinéraire</a><a class="link-arrow" href="${href('horaires-acces/')}">Horaires et accès</a></p>
     ${PHONE_CONFIRMED ? `<p>Téléphone : <a href="tel:${business.phone.value.replace(/\s/g, '')}">${business.phone.value}</a></p>` : '<!-- TODO: le numéro de téléphone reste masqué tant que PHONE_CONFIRMED est faux (src/data/business.ts). -->'}
     <p class="tbc">Pas encore d’e-mail ni de réseaux sociaux : passez au comptoir ou utilisez l’itinéraire.</p>
     <div class="acc-block"><h3>Paiement</h3><p>${esc(business.payment[0])}. ${esc(business.paymentTodo)}</p></div>
+    <p class="tbc">Photo d’illustration Unsplash, pas la devanture du magasin. TODO : photo de la devanture à fournir par le commerçant.</p>
   </div>
   <form class="contact-form" data-demo-form aria-describedby="cf-note" novalidate>
     <h2>Un message ?</h2>
@@ -314,6 +323,7 @@ export function mentionsBody(): string {
   const l = business.legal
   return `
 ${pageHero('Mentions légales', 'Informations légales de l’éditeur. Site de démonstration : le contenu éditorial est un exemple.')}
+${photoBand('bocaux-etagere', 'band-top band-slim')}
 <section class="section"><div class="wrap prose">
   <h2>Éditeur</h2>
   <p>${esc(business.legalName)}, ${l.form} au capital de ${l.capital}.<br />Siège : ${business.address.street}, ${business.address.postalCode} ${business.address.city}.<br />SIREN ${l.siren}, SIRET ${l.siret}.<br />TVA intracommunautaire : ${l.vat}.<br />Activité (NAF) : ${l.naf}.</p>
@@ -323,15 +333,16 @@ ${pageHero('Mentions légales', 'Informations légales de l’éditeur. Site de 
   <h2>Hébergement</h2>
   <p>GitHub Pages, GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis.</p>
   <h2>Contenu de démonstration</h2>
-  <p>Les produits, prix, articles du journal et illustrations sont des exemples, produits pour cette démonstration. Seuls sont réels : l’adresse, l’identité légale, le fait que le magasin soit ouvert jusqu’à 1h, les informations du relais colis publiées par Pickup et La Poste, et les avis Google cités, attribués à la plateforme.</p>
+  <p>Les produits, prix, articles du journal, illustrations et photos sont des exemples, produits pour cette démonstration. Seuls sont réels : l’adresse, l’identité légale, le fait que le magasin soit ouvert jusqu’à 1h, les informations du relais colis publiées par Pickup et La Poste, et les avis Google cités, attribués à la plateforme.</p>
   <h2>Propriété intellectuelle</h2>
-  <p>Les illustrations sont des créations originales. Aucune photographie, aucun logo de transporteur et aucun logo du magasin n’est utilisé.</p>
+  <p>Les illustrations dessinées sont des créations originales. Les photographies sont des photos d’illustration issues d’Unsplash (licence Unsplash) : elles ne montrent pas le magasin. Aucun logo de transporteur et aucun logo du magasin n’est utilisé.</p>
 </div></section>`
 }
 
 export function confidentialiteBody(): string {
   return `
 ${pageHero('Confidentialité', 'Ce site ne collecte aucune donnée personnelle.')}
+${photoBand('epices-bocaux', 'band-top band-slim')}
 <section class="section"><div class="wrap prose">
   <h2>Pas de cookies, pas de suivi</h2>
   <p>Ce site n’utilise ni cookie, ni outil de mesure d’audience, ni service tiers de suivi. Les polices sont hébergées avec le site.</p>
@@ -348,6 +359,7 @@ export function planBody(): string {
   const groups = Array.from(new Set(ALL_LINKS.map((l) => l.group)))
   return `
 ${pageHero('Plan du site', 'Toutes les pages, en un coup d’œil.')}
+${photoBand('allee-epicerie', 'band-top band-slim')}
 <section class="section"><div class="wrap sitemap">${groups.map((g) => `<div><h2>${g}</h2><ul>${ALL_LINKS.filter((l) => l.group === g).map((l) => `<li><a href="${href(l.path)}">${l.label}</a></li>`).join('')}</ul></div>`).join('')}</div></section>`
 }
 
@@ -359,6 +371,8 @@ export function notFoundBody(): string {
   <p class="lead">La page demandée n’existe pas ou a été déplacée. Le rideau est tiré, mais le reste du magasin est ouvert.</p>
   <p class="hero-cta"><a class="btn btn-primary" href="${href()}">Retour à l’accueil</a><a class="link-arrow" href="${href('rayons/')}">Voir les rayons</a></p></div>
   <div class="nf-art">${sceneFigure('rideau', 'Illustration d’un rideau métallique baissé sur une vitrine.')}</div>
+</div>
+<div class="wrap">${photoFigure(photo('rue-nuit'), 'ph-band nf-band')}
 </div></section>`
 }
 

@@ -58,11 +58,29 @@ function initNav(): void {
   window.matchMedia('(min-width: 1100px)').addEventListener('change', (m) => { if (m.matches) set(false) })
 }
 
+/** Pause CSS loops (marquee, lamp glow) while their section is offscreen. */
+function pauseOffscreen(): void {
+  if (!('IntersectionObserver' in window)) return
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.target.classList.toggle('is-off', !e.isIntersecting)), { rootMargin: '80px 0px' })
+  $$('.marquee, .hero').forEach((el) => io.observe(el))
+}
+
+/** Horizontal chip rows: drop the edge-fade swipe hint once the end is reached. */
+function swipeHints(): void {
+  $$('.cb-chips').forEach((row) => {
+    const upd = (): void => { row.classList.toggle('at-end', row.scrollLeft + row.clientWidth >= row.scrollWidth - 4) }
+    row.addEventListener('scroll', upd, { passive: true })
+    window.addEventListener('resize', upd, { passive: true })
+    upd()
+  })
+}
+
 async function motion(page: string): Promise<void> {
   const fx = await import('./scripts/fx')
   const reduce = reducedMotion()
   if (!reduce) fx.startLenis()
   fx.splitTitles()
+  fx.photoDrift()
   if (page === 'home') {
     const h = await import('./scripts/home')
     h.initHero()
@@ -81,6 +99,8 @@ function boot(): void {
   if (!reducedMotion()) initReveal()
   ripple()
   scrollProgress()
+  pauseOffscreen()
+  swipeHints()
   if (page === 'rayons') initCatalog()
   if (page === 'journal') initJournal()
   if (page === 'article') initArticle()
