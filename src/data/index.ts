@@ -1,0 +1,13 @@
+// Barrel for the typed data layer. Each module is headed REAL or SAMPLE.
+export * from './business'
+export * from './hours'
+export * from './reviews'
+export * from './categories'
+export * from './tags'
+export * from './products'
+export * from './parcel'
+export * from './night'
+export * from './misc'
+export * from './faq'
+export * from './gallery'
+export * from './posts'
