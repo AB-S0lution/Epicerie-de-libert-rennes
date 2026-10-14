@@ -174,7 +174,7 @@ ${pageHero('Le magasin et le boulevard', 'Une épicerie de quartier au 46 boulev
     <p class="lead">Une épicerie de quartier ouverte 7j/7 jusqu’à 1h, qui sert aussi de point relais colis. La société EPI DE LIBERTE a été créée en novembre 2025 et le magasin est ouvert depuis l’hiver 2025-2026.</p>
     <p>Nous n’avons pas d’histoire de famille à raconter, et nous préférons ne rien inventer. Ce que nous pouvons dire : le magasin tient à l’accueil, aux horaires tardifs, à un service fiable et à un quartier où l’on se sent en sécurité.</p>
     <div class="photo-pair">${photoFigure(photo('vitrine-nuit'))}${photoFigure(photo('allee-epicerie'))}</div>
-    <p class="tbc">Photos d’illustration Unsplash. TODO : photos de la devanture et de l’intérieur à fournir par le commerçant.</p>
+    <p class="tbc">Photos d’illustration Unsplash. Les photos de la devanture et de l’intérieur seront fournies par le commerçant.</p>
   </div>
   <aside class="plate-card">
     <h2>Ce que vous nous dites</h2>
@@ -226,7 +226,7 @@ ${photoBand('vitrine-nuit', 'band-top')}
   <div class="receipt-wall wall-all">${reviews.map((r, i) => receipt(r, i)).join('')}</div>
   <div class="owner-replies"><h2>La réponse du magasin</h2>${ownerReplies.map((o) => `<p class="reply">« ${esc(o.text)} »</p>`).join('')}<p class="reply-by">Réponses du propriétaire sur Google</p></div>
   <div class="word-cloud"><h2>Les mots qui reviennent</h2><ul>${words}</ul></div>
-  <p class="avis-cta"><a class="btn btn-primary" href="${business.links.carte}" target="_blank" rel="noopener">Laisser un avis sur Google</a><small>TODO : lien direct vers la fiche Google, à fournir par le commerçant. Ce lien ouvre la carte.</small></p>
+  <p class="avis-cta"><a class="btn btn-primary" href="${business.links.carte}" target="_blank" rel="noopener">Laisser un avis sur Google</a><small>Ce lien ouvre la carte. Le lien direct vers la fiche Google sera fourni par le commerçant.</small></p>
 </div></section>`
 }
 
@@ -306,7 +306,7 @@ ${pageHero('Nous trouver', 'Passez nous voir, on répond au comptoir.')}
     ${PHONE_CONFIRMED ? `<p>Téléphone : <a href="tel:${business.phone.value.replace(/\s/g, '')}">${business.phone.value}</a></p>` : '<!-- TODO: le numéro de téléphone reste masqué tant que PHONE_CONFIRMED est faux (src/data/business.ts). -->'}
     <p class="tbc">Pas encore d’e-mail ni de réseaux sociaux : passez au comptoir ou utilisez l’itinéraire.</p>
     <div class="acc-block"><h3>Paiement</h3><p>${esc(business.payment[0])}. ${esc(business.paymentTodo)}</p></div>
-    <p class="tbc">Photo d’illustration Unsplash, pas la devanture du magasin. TODO : photo de la devanture à fournir par le commerçant.</p>
+    <p class="tbc">Photo d’illustration Unsplash, pas la devanture du magasin. La photo de la devanture sera fournie par le commerçant.</p>
   </div>
   <form class="contact-form" data-demo-form aria-describedby="cf-note" novalidate>
     <h2>Un message ?</h2>

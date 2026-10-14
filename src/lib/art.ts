@@ -228,7 +228,18 @@ export function vignette(kind: string): string {
 }
 
 // ---------- Quartier map (schematic, not to scale) ----------
+// Map points: on phones the small labels are replaced by numbered dots and a legend list below.
+const MAP_KEY: Array<[number, number, string]> = [
+  [334, 172, 'Le magasin, no 46'],
+  [184, 77, 'Le Liberté, esplanade'],
+  [392, 300, 'Métro Colombier (b)'],
+  [452, 146, 'Métro République (a, b)'],
+  [70, 238, 'Place de Bretagne'],
+  [566, 174, 'Av. Jean-Janvier'],
+]
+
 export function quartierMap(): string {
+  const nums = MAP_KEY.map(([x, y], i) => `<g class="map-num"><circle cx="${x}" cy="${y}" r="18" fill="${i === 0 ? 'var(--sodium)' : 'var(--craie)'}" stroke="var(--bitume)" stroke-width="3"/><text x="${x}" y="${y + 8}" text-anchor="middle" fill="var(--bitume)">${i + 1}</text></g>`).join('')
   return `<svg class="art map-art" viewBox="0 0 640 400" role="img" aria-label="Plan schématique du quartier : le boulevard de la Liberté entre la place de Bretagne à l’ouest et l’avenue Jean-Janvier à l’est, avec le magasin, les stations de métro Colombier et République, l’esplanade Charles-de-Gaulle et Le Liberté." focusable="false">
     <rect width="640" height="400" fill="var(--map-bg)"/>
     <g stroke="var(--map-line)" stroke-width="10" fill="none" stroke-linecap="round" opacity=".8">
@@ -238,6 +249,7 @@ export function quartierMap(): string {
     <text x="52" y="236" class="map-label" fill="var(--craie)">Place de Bretagne</text>
     <text x="520" y="178" class="map-label" fill="var(--craie)">Av. Jean-Janvier</text>
     <text x="250" y="266" class="map-label big" fill="var(--craie)">Boulevard de la Liberté</text>
+    <text x="150" y="270" class="map-label-sm" fill="var(--craie)">Bd de la Liberté</text>
     <text x="250" y="284" class="map-label" fill="var(--ardoise)">Boulouard ar Frankiz</text>
     <text x="170" y="116" class="map-label" fill="var(--ardoise)">Centre-ville</text>
     <text x="430" y="360" class="map-label" fill="var(--ardoise)">Colombier</text>
@@ -246,8 +258,11 @@ export function quartierMap(): string {
     <g><rect x="150" y="70" width="14" height="14" rx="3" fill="var(--ardoise)"/><text x="170" y="82" class="map-label" fill="var(--craie)">Le Liberté, esplanade</text></g>
     <g><circle cx="360" cy="300" r="8" fill="var(--craie)"/><text x="374" y="304" class="map-label" fill="var(--craie)">Métro Colombier (b)</text></g>
     <g><circle cx="420" cy="170" r="8" fill="var(--craie)"/><text x="434" y="150" class="map-label" fill="var(--craie)">Métro République (a, b)</text></g>
+    ${nums}
     <text x="22" y="388" class="map-label" fill="var(--ardoise)">Plan schématique, hors échelle</text>
-  </svg>`
+  </svg>
+  <ol class="map-key" aria-hidden="true">${MAP_KEY.map(([, , label], i) => `<li><span class="mk-n${i === 0 ? ' is-shop' : ''}">${i + 1}</span>${label}</li>`).join('')}</ol>
+  <p class="map-key-note" aria-hidden="true">Plan schématique, hors échelle</p>`
 }
 
 // ---------- Gallery / journal scenes (viewBox 400 x 300) ----------

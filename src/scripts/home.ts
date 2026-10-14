@@ -2,7 +2,7 @@
 import { hLabel } from '../lib/format'
 import { reducedMotion } from './dom'
 import { $, $$ } from './dom'
-import { gsap, ScrollTrigger, SplitText } from './fx'
+import { accentRoom, gsap, ScrollTrigger, SplitText } from './fx'
 import { currentShopStatus } from './status'
 
 const UP = -400 // shutter fully raised (out of the window clip), in SVG user units
@@ -43,9 +43,11 @@ export function initHero(): void {
     if (small) {
       // Phones: words, not 30 single letters, drop in; no 3D rotation (cheaper, same sign-letter feel).
       const split = SplitText.create(title, { type: 'words', mask: 'words' })
+      accentRoom(split.masks)
       gsap.from(split.words, { yPercent: -110, opacity: 0, duration: 0.7, ease: 'back.out(1.3)', stagger: 0.06, delay: 0.1 })
     } else {
       const split = SplitText.create(title, { type: 'words,chars', mask: 'words' })
+      accentRoom(split.masks)
       gsap.from(split.chars, { yPercent: -110, rotationX: -70, opacity: 0, duration: 0.8, ease: 'back.out(1.4)', stagger: 0.035, delay: 0.1 })
     }
   }

@@ -31,12 +31,20 @@ export function initReveal(): void {
     { threshold: 0.1, rootMargin: '0px 0px -6% 0px' },
   )
   nodes.forEach((el) => io.observe(el))
-  // Fail-safe: whatever is in view or already scrolled past after 3s is shown, observer or not.
+  // Fail-safe: whatever is on screen, already scrolled past, or anything at all once the page end is
+  // reached, is shown. Runs at 3s and again every time scrolling stops (debounced), observer or not.
   const sweep = (): void => {
     const vh = window.innerHeight
-    nodes.forEach((el) => { if (!el.classList.contains('is-in') && el.getBoundingClientRect().top < vh) { el.classList.add('is-in'); io.unobserve(el) } })
+    const atEnd = window.scrollY + vh >= document.documentElement.scrollHeight - 40
+    nodes.forEach((el) => {
+      if (el.classList.contains('is-in')) return
+      if (atEnd || el.getBoundingClientRect().top < vh) { el.classList.add('is-in'); io.unobserve(el) }
+    })
   }
   window.setTimeout(sweep, 3000)
+  let t = 0
+  window.addEventListener('scroll', () => { window.clearTimeout(t); t = window.setTimeout(sweep, 180) }, { passive: true })
+  window.addEventListener('resize', () => { window.clearTimeout(t); t = window.setTimeout(sweep, 250) })
   // Jumping to an anchor or restoring a scroll position must never land on hidden content.
   window.addEventListener('hashchange', () => window.setTimeout(sweep, 400))
   window.addEventListener('pageshow', (e) => { if ((e as PageTransitionEvent).persisted) sweep() })

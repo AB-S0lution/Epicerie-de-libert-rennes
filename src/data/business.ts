@@ -35,8 +35,8 @@ export const business = {
     vat: 'FR88994343598',
     naf: '47.11B Commerce d’alimentation générale',
     createdOn: '24 novembre 2025',
-    rcsNote: 'TODO: confirmer la mention RCS Rennes (extrait Infogreffe / RNE).',
-    publisherNote: 'TODO: directeur de la publication à renseigner avec l’accord du gérant.',
+    rcsNote: 'À confirmer : mention RCS Rennes (extrait Infogreffe / RNE).',
+    publisherNote: 'À confirmer : directeur de la publication, à renseigner avec l’accord du gérant.',
   },
   since: 'depuis 2025',
   rating: {

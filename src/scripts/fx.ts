@@ -18,12 +18,19 @@ export function startLenis(): Lenis {
   return lenis
 }
 
+/** SplitText masks clip at the line box, which cuts accents on capitals (É, È) in tight display type.
+ *  Give each mask headroom above the word without changing the line layout. */
+export function accentRoom(masks: Element[]): void {
+  masks.forEach((m) => { const st = (m as HTMLElement).style; st.paddingTop = '0.18em'; st.marginTop = '-0.18em' })
+}
+
 /** Page-hero titles: words rise out of a mask. Heading stays readable (SplitText sets aria-label). */
 export function splitTitles(): void {
   const small = window.matchMedia('(max-width: 899px)').matches
   document.querySelectorAll<HTMLElement>('.page-hero h1.split, .nf h1.split, .art-head h1').forEach((el) => {
     el.style.visibility = 'visible'
     const s = SplitText.create(el, { type: 'words', mask: 'words' })
+    accentRoom(s.masks)
     // Phones: shorter, tighter rise so the title settles before the thumb starts scrolling.
     gsap.from(s.words, { yPercent: 105, duration: small ? 0.65 : 0.9, ease: 'expo.out', stagger: small ? 0.045 : 0.07 })
   })
